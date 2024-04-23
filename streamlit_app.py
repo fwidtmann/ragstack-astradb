@@ -24,7 +24,7 @@ from langchain.callbacks.base import BaseCallbackHandler
 import openai
 
 print("Started")
-st.set_page_config(page_title='Your Enterprise Sidekick', page_icon='🚀')
+st.set_page_config(page_title='GMS', page_icon='🚀')
 
 # Get a unique session id for memory
 if "session_id" not in st.session_state:
@@ -220,8 +220,8 @@ def load_model():
     print(f"""load_model""")
     # Get the OpenAI Chat Model
     return ChatOpenAI(
-        temperature=0.3,
-        model='gpt-4-1106-preview',
+        temperature=0.1,
+        model='gpt-4-turbo',
         streaming=True,
         verbose=True
     )
@@ -354,7 +354,7 @@ def load_vectorstore(username):
     # Get the load_vectorstore store from Astra DB
     return AstraDB(
         embedding=embedding,
-        collection_name=f"vector_context_{username}",
+        collection_name="gmsinfo",
         token=st.secrets["ASTRA_TOKEN"],
         api_endpoint=os.environ["ASTRA_ENDPOINT"],
     )
