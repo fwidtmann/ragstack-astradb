@@ -18,6 +18,7 @@ from langchain.schema import HumanMessage, AIMessage
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.runnable import RunnableMap
 from langchain.schema import StrOutputParser
+from langchain_community.document_loaders import SlackDirectoryLoader
 
 from langchain.callbacks.base import BaseCallbackHandler
 
@@ -101,6 +102,23 @@ def logout():
     st.rerun()
 
 # Function for Vectorizing uploaded data into Astra DB
+def vectorize_slack():
+    SLACK_WORKSPACE_URL = "https://gms-space.slack.com"
+    LOCAL_ZIPFILE = "/Users/florianwidtmann/Downloads/GMS Slack export Jan 1 2020 - Apr 24 2024.zip"  # Paste the local paty to your Slack zip file here.
+
+    loader = SlackDirectoryLoader(LOCAL_ZIPFILE, SLACK_WORKSPACE_URL)
+
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size = 1500,
+        chunk_overlap  = 100
+    )
+
+    docs = []
+    docs.extend(loader.load())
+    pages = text_splitter.split_documents(docs)
+    vectorstore.add_documents(pages)
+    st.info(f"{len(pages)} pages loaded.")
+
 def vectorize_text(uploaded_files):
     for uploaded_file in uploaded_files:
         if uploaded_file is not None:
@@ -354,7 +372,7 @@ def load_vectorstore(username):
     # Get the load_vectorstore store from Astra DB
     return AstraDB(
         embedding=embedding,
-        collection_name="gmsinfo",
+        collection_name="slack",
         token=st.secrets["ASTRA_TOKEN"],
         api_endpoint=os.environ["ASTRA_ENDPOINT"],
     )
@@ -462,6 +480,12 @@ with st.sidebar:
     upload = st.button(lang_dict['load_from_urls_button'])
     if upload and urls:
         vectorize_url(urls)
+
+# Include button to upload slack.zip and vectorize it
+with st.sidebar:
+    action = st.button("Upload Slack.zip")
+    if action:
+        vectorize_slack()
 
 # Drop the vector data and start from scratch
 if (username in st.secrets['delete_option'] and st.secrets.delete_option[username] == 'True'):
