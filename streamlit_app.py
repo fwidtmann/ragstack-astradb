@@ -209,12 +209,13 @@ Question:
 
 Answer in {language}:"""
 
-    if type == 'Short results':
-        print ("Prompt type: Short results")
-        template = f"""You're a helpful AI assistant tasked to answer the user's questions.
-You answer in an exceptionally brief way.
-If the question states the name of the user, just say 'Thanks, I'll use this information going forward'.
-If you don't know the answer, just say 'I do not know the answer'.
+    if type == 'Prompt by gms':
+        print ("Prompt type: Prompt by gms")
+        template = f"""You're a helpful AI assistent tasked to answer the user's questions.
+You're friendly and you answer extensively with multiple sentences. Only answer the question based on the retrieved context.
+Use the following pieces of context to answer the question at the end. If
+you're not sure, just say so. If there are potential multiple answers,
+summarize them as possible answers. Bitte auf Deutsch antworten.
 
 Use the following context to answer the question:
 {{context}}
@@ -372,7 +373,7 @@ def load_vectorstore(username):
     # Get the load_vectorstore store from Astra DB
     return AstraDB(
         embedding=embedding,
-        collection_name="slack",
+        collection_name="dilly",
         token=st.secrets["ASTRA_TOKEN"],
         api_endpoint=os.environ["ASTRA_ENDPOINT"],
     )
@@ -459,7 +460,7 @@ with st.sidebar:
         custom_prompt_text = open(f"""./customizations/prompt/default.txt""").read()
         custom_prompt_index = 0
 
-    prompt_type = st.selectbox(lang_dict['system_prompt'], ('Short results', 'Extended results', 'Custom'), index=custom_prompt_index)
+    prompt_type = st.selectbox(lang_dict['system_prompt'], ('Prompt by gms', 'Extended results', 'Custom'), index=custom_prompt_index)
     custom_prompt = st.text_area(lang_dict['custom_prompt'], custom_prompt_text, help=lang_dict['custom_prompt_help'], disabled=(prompt_type != 'Custom'))
     print(f"""{disable_vector_store}, {top_k_history}, {top_k_vectorstore}, {strategy}, {prompt_type}""")
 
