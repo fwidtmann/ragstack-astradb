@@ -216,6 +216,7 @@ Answer in {language}:"""
                        Use the following pieces of context to answer the question at the end. If
                        you're not sure, just say so. Please answer in german.
                        If the user is asking about booking a room, then provide this link https://jufa-gob14.gms.info/buchen/de/wien?uid=17157824953690 and if there are also from dates and to dates provided, add them as parameters to the link like https://jufa-gob14.gms.info/buchen/de/wien?uid=17157824953690&from=fromdate&to=todate
+                       and if there are also adults or persons number provided, add them as parameters to the link like https://jufa-gob14.gms.info/buchen/de/wien?adults=adults.
 
 Use the following context to answer the question:
 {{context}}
@@ -240,7 +241,7 @@ def load_model():
     # Get the OpenAI Chat Model
     return ChatOpenAI(
         temperature=0.1,
-        model='gpt-4-turbo',
+        model='gpt-4o',
         streaming=True,
         verbose=True
     )
